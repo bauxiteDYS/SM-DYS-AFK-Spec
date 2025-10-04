@@ -1,2 +1,6 @@
 # SM-DYS-AFK-Spec
-Sourcemod plugin for Dystopia that automatically movies AFK players to spectator team
+Sourcemod plugin for Dystopia that automatically movies AFK players to spectator team after they have been AFK for a certain duration  
+
+## Console Variables:  
+- `sm_afk_move_spec`: Default - `1`. Set to `1` to enable automatically moving AFK players to spectator team, set to `0` to disable.
+- `sm_afk_duration`: Default - `170`. The time in seconds that players can be AFK before being automatically moved to spectator team.
