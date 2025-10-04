@@ -5,20 +5,25 @@
 
 #define DEBUG false
 
+
+Handle g_afkTimer = null;
 ConVar g_cvarEnabled;
 ConVar g_cvarTime;
-bool g_enabled;
+
 char g_tag[] = "[AFK Timer]";
-float g_afkDuration;
+
 float g_clientOldPos[MAXPLAYERS+1][3];
 float g_lastMoveTime[MAXPLAYERS+1];
+float g_afkDuration;
+
+bool g_enabled;
 
 public Plugin myinfo = {
 	name = "Dys AFK Spec",
 	description = "Move AFK players to Spectator team",
 	author = "bauxite",
-	version = "0.1.0",
-	url = "",
+	version = "0.1.1",
+	url = "https://github.com/bauxiteDYS/SM-DYS-AFK-Spec",
 };
 
 public void OnPluginStart()
@@ -37,10 +42,9 @@ public void OnPluginStart()
 	AutoExecConfig();
 }
 
-void GetCvars()
+public void OnConfigsExecuted()
 {
-	g_enabled = g_cvarEnabled.BoolValue;
-	g_afkDuration = g_cvarTime.FloatValue;
+	GetCvars();
 }
 
 public void Cvar_Changed(ConVar convar, const char[] oldValue, const char[] newValue)
@@ -48,15 +52,24 @@ public void Cvar_Changed(ConVar convar, const char[] oldValue, const char[] newV
 	GetCvars();
 }
 
-public void OnConfigsExecuted()
+void GetCvars()
 {
-	// not needed due to flag - if(g_afkTimer != null)
+	g_enabled = g_cvarEnabled.BoolValue;
+	g_afkDuration = g_cvarTime.FloatValue;
 	
-	GetCvars();
+	CreateAFKTimer();
+}
+
+void CreateAFKTimer()
+{
+	if(g_afkTimer != null)
+	{
+		delete g_afkTimer;
+	}
 	
 	if(g_enabled)
 	{
-		CreateTimer(5.0, CheckAFK, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
+		g_afkTimer = CreateTimer(5.0, CheckAFK, _, TIMER_FLAG_NO_MAPCHANGE | TIMER_REPEAT);
 	}
 }
 
@@ -64,6 +77,12 @@ public Action CheckAFK(Handle timer)
 {
 	// we need to check if the player is also not doing something even if they are standing still, counts as moving if moving in cyber
 	// so then if they are not moving at all either in cyber or meat for 3 minutes its probably safe to assume afk
+	
+	if(!g_enabled) // probably don't need to do this but just for dunno
+	{
+		g_afkTimer = null;
+		return Plugin_Stop;
+	}
 	
 	float currentPos[3];
 	float curTime = GetGameTime();
