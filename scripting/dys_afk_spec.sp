@@ -22,7 +22,7 @@ public Plugin myinfo = {
 	name = "Dys AFK Spec",
 	description = "Move AFK players to Spectator team",
 	author = "bauxite",
-	version = "0.1.1",
+	version = "0.1.3",
 	url = "https://github.com/bauxiteDYS/SM-DYS-AFK-Spec",
 };
 
@@ -40,6 +40,12 @@ public void OnPluginStart()
 	HookConVarChange(g_cvarTime, Cvar_Changed);
 	
 	AutoExecConfig();
+}
+
+public void OnMapEnd()
+{
+	// handles are closed on map end but still contain old handle values, we have to set them to null on map end
+	g_afkTimer = null;
 }
 
 public void OnConfigsExecuted()
