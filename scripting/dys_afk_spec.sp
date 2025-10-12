@@ -11,6 +11,7 @@ ConVar g_cvarEnabled;
 ConVar g_cvarTime;
 
 char g_tag[] = "[AFK Timer]";
+char g_ctag[] = "\x04[AFK Timer]\x01";
 
 float g_clientOldPos[MAXPLAYERS+1][3];
 float g_lastMoveTime[MAXPLAYERS+1];
@@ -130,7 +131,7 @@ public Action CheckAFK(Handle timer)
 		
 		if(g_lastMoveTime[i] > 0.0 && curTime >= g_lastMoveTime[i] + g_afkDuration)
 		{
-			PrintToChatAll("\x08ffdd00%s \x03%N \x0800ccffhas been afk for %.2f minutes and has been moved to spectator.", g_tag, i, (g_afkDuration/60.0));
+			PrintToChatAll("%s \"%N\" has been afk for %.2f minutes and has been moved to spectator.", g_ctag, i, (g_afkDuration/60.0));
 			ClientCommand(i, "jointeam 1");
 			g_lastMoveTime[i] = 0.0;
 			g_clientOldPos[i] = {0.0, 0.0, 0.0};
